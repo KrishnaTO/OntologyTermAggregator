@@ -1,0 +1,16 @@
+Package: OntologyTermAggregator
+Type: Package
+Title: Term based Ontology parser via major repo
+Version: 0.1.0
+Author@R: person("Udaiwal", "Krishna", email = "krishna.udaiwal@gmail.com", 
+  role = c("aut", "cre"))
+Description: Retrieve and parse Ontologies via BioOntology repo
+URL: https://github.com/KrishnaTO/OntologyTermAggregator.git
+License: GPL-2
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    RCurl,
+    XML,
+    jsonlite,
+    tidyverse

@@ -1,0 +1,70 @@
+---
+title: "CrossOntology Term Parser"
+author: "Krishna Udaiwal"
+date: "12/11/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# POST form request to API
+library(RCurl)
+# Parse XML response from API
+library(XML)
+# Parse JSON data
+library(jsonlite)
+# Data manipulation
+library(tidyverse)
+
+# Instructions on getting an API key are at http://www.bioontology.org/wiki/index.php/Annotator_User_Guide#Annotator_Web_service_Validation
+yourAPIKey <- "ENTER_API_KEY_HERE"
+searchTerm <- "Neurofibroma"
+```
+
+
+```{r}
+res.search <- postForm('http://data.bioontology.org/search',
+                          q = searchTerm,
+                          also_search_obsolete=FALSE ,
+                          inlcude="all",
+                          pagesize=1000,
+                          apikey = yourAPIKey
+                          )
+
+res.json <- fromJSON(res.search)$collection %>% 
+  filter(ontologyType == "ONTOLOGY") %>% 
+  select(-obsolete, -ontologyType, -provisional, -`@context`, -cui, -semanticType)
+res.json$links$`@context` <- NULL
+```
+
+```{r Class Terms GET}
+if(file.exists("Searchtoclasses_json.RData")){
+  load("Searchtoclasses_json.RData")
+  } else{ 
+    rdfs <- lapply(res.json$links$self, getFullEntity)
+    save(rdfs, file = "Searchtoclasses_json.RData")
+    }
+```
+
+```{r Combining Data based on Single specific term assumption}
+combined_output <- reduce(rdfs, cat_lists)
+combined_output.parents <- reduce(combined_output$parents, cat_lists)
+combined_output$parents <- NULL
+
+cols <- c("subClassOf", "definition", "synonym", "cui", "semanticType", "label")
+combined_output[cols] <- lapply(combined_output[cols], listunique)
+combined_output.parents[cols] <- lapply(combined_output.parents[cols], listunique)
+
+# complex variables here consist of non-specific and specific relationary terms belonging to the term superclass, and thus link to input information per unique variable data input is a future work-in-process. 
+complex_cols <- c("properties", "links", "@context")
+combined_output.complex <- combined_output[complex_cols]
+combined_output[complex_cols] <- NULL
+
+combined_output <- lapply(combined_output, unique)
+combined_output$id <- unique(combined_output$id)
+combined_output$prefLabel <- unique(combined_output$prefLabel)
+```
+
+```{r}
+lapply(combined_output, function(x) write.table(data.frame(x), "combined_output.csv", append= T, sep=',' ))
+saveRDS(combined_output.complex, file = "combined_output.complex.RData")
+```
