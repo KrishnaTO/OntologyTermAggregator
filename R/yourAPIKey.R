@@ -8,4 +8,6 @@
 #'
 #' @export
 
-yourAPIKey <- "ENTER_API_KEY_HERE"
+yourAPIKey <- function(apikey = "ENTER_API_KEY_HERE"){
+  return(apikey)
+}
