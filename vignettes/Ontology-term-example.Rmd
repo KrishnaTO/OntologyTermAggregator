@@ -26,7 +26,7 @@ library(jsonlite)
 library(tidyverse)
 
 # Instructions on getting an API key are at http://www.bioontology.org/wiki/index.php/Annotator_User_Guide#Annotator_Web_service_Validation
-yourAPIKey <- "ENTER_API_KEY_HERE"
+#yourAPIKey <- "ENTER_API_KEY_HERE"
 searchTerm <- "Neurofibroma"
 ```
 
