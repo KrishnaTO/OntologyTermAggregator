@@ -6,7 +6,7 @@ Author@R: person("Udaiwal", "Krishna", email = "krishna.udaiwal@gmail.com",
   role = c("aut", "cre"))
 Description: Retrieve and parse Ontologies via BioOntology repo
 URL: https://github.com/KrishnaTO/OntologyTermAggregator.git
-License: GPL-2
+License: MIT
 Encoding: UTF-8
 LazyData: true
 Imports: 
@@ -14,3 +14,9 @@ Imports:
     XML,
     jsonlite,
     tidyverse
+RoxygenNote: 7.1.1
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat
+VignetteBuilder: knitr

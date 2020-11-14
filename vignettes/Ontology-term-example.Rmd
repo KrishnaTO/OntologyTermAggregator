@@ -1,11 +1,21 @@
 ---
-title: "CrossOntology Term Parser"
-author: "Krishna Udaiwal"
-date: "12/11/2020"
-output: html_document
+title: "Ontology-term-example"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Ontology-term-example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include=FALSE}
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+#library(OntologyTermAggregator)
 # POST form request to API
 library(RCurl)
 # Parse XML response from API
@@ -20,6 +30,16 @@ yourAPIKey <- "ENTER_API_KEY_HERE"
 searchTerm <- "Neurofibroma"
 ```
 
+```{r}
+# Retrieved function cat_lists: https://stackoverflow.com/a/57171812
+cat_lists <- function(list1, list2) {  
+  
+  keys <- unique(c(names(list1), names(list2)))
+  map2(list1[keys], list2[keys], c) %>% 
+    set_names(keys)  
+  
+}
+```
 
 ```{r}
 res.search <- postForm('http://data.bioontology.org/search',
@@ -37,12 +57,14 @@ res.json$links$`@context` <- NULL
 ```
 
 ```{r Class Terms GET}
-if(file.exists("Searchtoclasses_json.RData")){
-  load("Searchtoclasses_json.RData")
+# For convenience, as getting all axiom term data takes a while, a local copy of the results is stored in the data
+
+if(searchTerm == "Neurofibroma" & file.exists("../data/Searchtoclasses_json.RData")){
+  load("../data/Searchtoclasses_json.RData")
   } else{ 
     rdfs <- lapply(res.json$links$self, getFullEntity)
-    save(rdfs, file = "Searchtoclasses_json.RData")
-    }
+    save(rdfs, file = "../data/Searchtoclasses_json.RData")
+  }
 ```
 
 ```{r Combining Data based on Single specific term assumption}
@@ -51,7 +73,7 @@ combined_output.parents <- reduce(combined_output$parents, cat_lists)
 combined_output$parents <- NULL
 
 cols <- c("subClassOf", "definition", "synonym", "cui", "semanticType", "label")
-combined_output[cols] <- lapply(combined_output[cols], listunique)
+combined_output[cols] <- lapply(combined_output[cols], listUnique)
 combined_output.parents[cols] <- lapply(combined_output.parents[cols], listunique)
 
 # complex variables here consist of non-specific and specific relationary terms belonging to the term superclass, and thus link to input information per unique variable data input is a future work-in-process. 
@@ -68,3 +90,4 @@ combined_output$prefLabel <- unique(combined_output$prefLabel)
 lapply(combined_output, function(x) write.table(data.frame(x), "combined_output.csv", append= T, sep=',' ))
 saveRDS(combined_output.complex, file = "combined_output.complex.RData")
 ```
+
