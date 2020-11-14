@@ -26,7 +26,7 @@ library(jsonlite)
 library(tidyverse)
 
 # Instructions on getting an API key are at http://www.bioontology.org/wiki/index.php/Annotator_User_Guide#Annotator_Web_service_Validation
-yourAPIKey <- "ENTER_API_KEY_HERE"
+#yourAPIKey <- "ENTER_API_KEY_HERE"
 searchTerm <- "Neurofibroma"
 ```
 
@@ -58,8 +58,12 @@ res.json$links$`@context` <- NULL
 
 ```{r Class Terms GET}
 # For convenience, as getting all axiom term data takes a while, a local copy of the results is stored in the data
+<<<<<<< HEAD:vignettes/Ontology-term-example.Rmd
 
 if(searchTerm == "Neurofibroma" & file.exists("../data/Searchtoclasses_json.RData")){
+=======
+if(file.exists("../data/Searchtoclasses_json.RData")){
+>>>>>>> faf12afa028a4786824945a780dc6895ed6a35e3:vignettes/SearchviaCombinedOntology.Rmd
   load("../data/Searchtoclasses_json.RData")
   } else{ 
     rdfs <- lapply(res.json$links$self, getFullEntity)
