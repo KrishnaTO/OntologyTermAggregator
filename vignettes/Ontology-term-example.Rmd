@@ -58,7 +58,6 @@ res.json$links$`@context` <- NULL
 
 ```{r Class Terms GET}
 # For convenience, as getting all axiom term data takes a while, a local copy of the results is stored in the data
-
 if(searchTerm == "Neurofibroma" & file.exists("../data/Searchtoclasses_json.RData")){
   load("../data/Searchtoclasses_json.RData")
   } else{ 
